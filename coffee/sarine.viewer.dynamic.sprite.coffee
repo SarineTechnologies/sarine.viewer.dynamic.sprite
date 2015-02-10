@@ -99,4 +99,4 @@ class Sprite extends Viewer.Dynamic
 			imgInfo = @playOrder[@imageIndex]
 			# console.log($.inArray(playingSprite,sprites),row,col)
 			@ctx.drawImage(@sprites[imgInfo.spriteNumber].image, imgInfo.col  ,imgInfo.row)
-@Viewer.Dynamic.Sprite = Sprite
+@Sprite = Sprite

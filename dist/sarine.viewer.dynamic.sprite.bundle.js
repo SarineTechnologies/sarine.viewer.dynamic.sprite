@@ -1,3 +1,4 @@
+/*! sarine.viewer.dynamic.sprite - v0.0.1 -  Tuesday, February 10th, 2015, 1:42:05 PM */
 (function() {
   var Sprite, Viewer,
     __hasProp = {}.hasOwnProperty,
@@ -240,6 +241,6 @@
 
   })(Viewer.Dynamic);
 
-  this.Viewer.Dynamic.Sprite = Sprite;
+  this.Sprite = Sprite;
 
 }).call(this);
