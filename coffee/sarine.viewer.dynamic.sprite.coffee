@@ -29,7 +29,7 @@ class Sprite extends Viewer.Dynamic
 	first_init : ()->
 		defer = @first_init_defer 
 		msg = {}
-		defer.notifyWith(@id,"load_json","start") 
+		defer.notify(@id,"load_json","start") 
 		_t = @
 		$.getJSON @src + @jsonFileName , (data)->
 			_t.metadata = data
