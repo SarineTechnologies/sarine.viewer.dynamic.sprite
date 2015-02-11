@@ -48,7 +48,7 @@ class Sprite extends Viewer.Dynamic
 				defer.notify(_t.id + " : finish load first image");
 				_t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize)
 				_t.imageIndex = 0
-				defer.resolve()			
+				defer.resolve(_t)			
 		defer
 	full_init : ()->
 		defer = @full_init_defer
@@ -67,7 +67,7 @@ class Sprite extends Viewer.Dynamic
 			_t.imagesDownload += sprite.column * sprite.rows
 			_t.sprites.push sprite
 			if(_t.imagesDownload >= _t.metadata.TotalImageCount)
-				mainDefer.resolve()
+				mainDefer.resolve(_t)
 			else
 				_t.downloadSprite(mainDefer)
 			true
