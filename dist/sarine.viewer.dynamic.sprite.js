@@ -1,4 +1,9 @@
-/*! sarine.viewer.dynamic.sprite - v0.0.1 -  Tuesday, February 10th, 2015, 1:42:05 PM */
+
+/*!
+sarine.viewer.dynamic.sprite - v0.0.2 -  Thursday, February 12th, 2015, 4:36:17 PM 
+ The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
+ */
+
 (function() {
   var Sprite,
     __hasProp = {}.hasOwnProperty,
@@ -45,7 +50,7 @@
       var defer, msg, _t;
       defer = this.first_init_defer;
       msg = {};
-      defer.notifyWith(this.id, "load_json", "start");
+      defer.notify(this.id, "load_json", "start");
       _t = this;
       $.getJSON(this.src + this.jsonFileName, function(data) {
         _t.metadata = data;
@@ -65,7 +70,7 @@
           defer.notify(_t.id + " : finish load first image");
           _t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize);
           _t.imageIndex = 0;
-          return defer.resolve();
+          return defer.resolve(_t);
         });
       });
       return defer;
@@ -94,7 +99,7 @@
         _t.imagesDownload += sprite.column * sprite.rows;
         _t.sprites.push(sprite);
         if (_t.imagesDownload >= _t.metadata.TotalImageCount) {
-          mainDefer.resolve();
+          mainDefer.resolve(_t);
         } else {
           _t.downloadSprite(mainDefer);
         }
