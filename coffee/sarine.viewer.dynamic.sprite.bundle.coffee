@@ -1,5 +1,5 @@
 ###!
-sarine.viewer.dynamic.sprite - v0.0.5 -  Monday, February 23rd, 2015, 2:46:54 PM 
+sarine.viewer.dynamic.sprite - v0.0.5 -  Monday, March 23rd, 2015, 4:20:36 PM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
 ###
 
@@ -37,7 +37,7 @@ class Viewer.Dynamic extends Viewer
 	@playing = false
 	nextImage : Error
 
-	constructor: (options) ->
+	constructor: (options) -> 
 		super(options)
 		@delay = 50
 		Object.getOwnPropertyNames(Viewer.Dynamic.prototype).forEach((k)-> 
@@ -70,7 +70,7 @@ class Sprite extends Viewer.Dynamic
 		@imageIndex = -1
 		@imagesDownload = 0
 		@imagegap = 0
-		@playOrder = {}
+		@playOrder = {}  
 
 
 	class SprtieImg
@@ -107,6 +107,12 @@ class Sprite extends Viewer.Dynamic
 			_t.loadImage(_t.src + _t.firstImagePath).then (img)-> 
 				defer.notify(_t.id + " : finish load first image");
 				_t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize)
+				_t.imageIndex = 0
+				defer.resolve(_t)
+		.fail ->
+			_t.loadImage(_t.callbackPic).then (img)-> 
+				defer.notify(_t.id + " : finish load first image");
+				_t.ctx.drawImage(img, 0, 0, img.width, img.height)
 				_t.imageIndex = 0
 				defer.resolve(_t)			
 		defer
