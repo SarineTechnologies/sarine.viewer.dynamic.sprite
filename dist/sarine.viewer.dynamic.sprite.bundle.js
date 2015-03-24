@@ -1,6 +1,6 @@
 
 /*!
-sarine.viewer.dynamic.sprite - v0.0.7 -  Tuesday, March 24th, 2015, 9:58:45 AM 
+sarine.viewer.dynamic.sprite - v0.0.7 -  Tuesday, March 24th, 2015, 10:56:57 AM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
  */
 
@@ -172,11 +172,13 @@ sarine.viewer.dynamic.sprite - v0.0.7 -  Tuesday, March 24th, 2015, 9:58:45 AM
       }).fail(function() {
         return _t.loadImage(_t.callbackPic).then(function(img) {
           defer.notify(_t.id + " : finish load first image");
+          _t.canvas.attr({
+            "class": "no_stone",
+            "width": img.width,
+            "height": img.height
+          });
           _t.ctx.drawImage(img, 0, 0, img.width, img.height);
           _t.imageIndex = 0;
-          _t.canvas.attr({
-            "class": "no_stone"
-          });
           return defer.resolve(_t);
         });
       });
