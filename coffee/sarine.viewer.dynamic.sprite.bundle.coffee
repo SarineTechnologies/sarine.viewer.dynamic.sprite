@@ -1,5 +1,5 @@
 ###!
-sarine.viewer.dynamic.sprite - v0.0.9 -  Wednesday, March 25th, 2015, 11:58:15 AM 
+sarine.viewer.dynamic.sprite - v0.0.15 -  Wednesday, March 25th, 2015, 5:33:49 PM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
 ###
 
@@ -29,9 +29,9 @@ class Viewer
   convertElement : Error
   cancel : ()-> rm.cancel(@)
   loadImage : (src)-> rm.loadImage.apply(@,[src])
-  setTimeout : (fun,delay)-> rm.setTimeout.apply(@,[@delay])
+  setTimeout : (delay,callback)-> rm.setTimeout.apply(@,[@delay,callback]) 
     
-@Viewer = Viewer
+@Viewer = Viewer 
 
 class Viewer.Dynamic extends Viewer
 	@playing = false
@@ -48,15 +48,15 @@ class Viewer.Dynamic extends Viewer
 	play: (force,delay) ->
 		if force
 			@playing = true;
-		@nextImage.apply(@)
+		@nextImage.apply(@) 
 		if(@playing)
-			_t = @
-			@setTimeout(@delay).then(_t.play)
-	stop: ()->
+			_t = @ 
+			@setTimeout(@delay,_t.play)  
+	stop: ()-> 
 		@playing = false
 
 
-
+ 
 
 class Sprite extends Viewer.Dynamic
 	constructor: (options) ->

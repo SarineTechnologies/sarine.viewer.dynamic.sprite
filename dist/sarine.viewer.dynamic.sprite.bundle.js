@@ -1,6 +1,6 @@
 
 /*!
-sarine.viewer.dynamic.sprite - v0.0.9 -  Wednesday, March 25th, 2015, 11:58:15 AM 
+sarine.viewer.dynamic.sprite - v0.0.15 -  Wednesday, March 25th, 2015, 5:33:49 PM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
  */
 
@@ -59,8 +59,8 @@ sarine.viewer.dynamic.sprite - v0.0.9 -  Wednesday, March 25th, 2015, 11:58:15 A
       return rm.loadImage.apply(this, [src]);
     };
 
-    Viewer.prototype.setTimeout = function(fun, delay) {
-      return rm.setTimeout.apply(this, [this.delay]);
+    Viewer.prototype.setTimeout = function(delay, callback) {
+      return rm.setTimeout.apply(this, [this.delay, callback]);
     };
 
     return Viewer;
@@ -94,7 +94,7 @@ sarine.viewer.dynamic.sprite - v0.0.9 -  Wednesday, March 25th, 2015, 11:58:15 A
       this.nextImage.apply(this);
       if (this.playing) {
         _t = this;
-        return this.setTimeout(this.delay).then(_t.play);
+        return this.setTimeout(this.delay, _t.play);
       }
     };
 
