@@ -1,6 +1,6 @@
 
 /*!
-sarine.viewer.dynamic.sprite - v0.0.8 -  Tuesday, March 24th, 2015, 10:58:06 AM 
+sarine.viewer.dynamic.sprite - v0.0.8 -  Wednesday, March 25th, 2015, 11:55:53 AM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
  */
 
@@ -26,6 +26,7 @@ sarine.viewer.dynamic.sprite - v0.0.8 -  Tuesday, March 24th, 2015, 10:58:06 AM
       this.imagesDownload = 0;
       this.imagegap = 0;
       this.playOrder = {};
+      this.validViewer = true;
     }
 
     SprtieImg = (function() {
@@ -65,6 +66,7 @@ sarine.viewer.dynamic.sprite - v0.0.8 -  Tuesday, March 24th, 2015, 10:58:06 AM
           return _t.play();
         }
       }).then(function() {
+        this.validViewer = true;
         defer.notify(_t.id + " : start load first image");
         return _t.loadImage(_t.src + _t.firstImagePath).then(function(img) {
           defer.notify(_t.id + " : finish load first image");
@@ -72,19 +74,22 @@ sarine.viewer.dynamic.sprite - v0.0.8 -  Tuesday, March 24th, 2015, 10:58:06 AM
           _t.imageIndex = 0;
           return defer.resolve(_t);
         });
-      }).fail(function() {
-        return _t.loadImage(_t.callbackPic).then(function(img) {
-          defer.notify(_t.id + " : finish load first image");
-          _t.canvas.attr({
-            "class": "no_stone",
-            "width": img.width,
-            "height": img.height
+      }).fail((function(_this) {
+        return function() {
+          _this.validViewer = false;
+          return _t.loadImage(_t.callbackPic).then(function(img) {
+            defer.notify(_t.id + " : finish load first image");
+            _t.canvas.attr({
+              "class": "no_stone",
+              "width": img.width,
+              "height": img.height
+            });
+            _t.ctx.drawImage(img, 0, 0, img.width, img.height);
+            _t.imageIndex = 0;
+            return defer.resolve(_t);
           });
-          _t.ctx.drawImage(img, 0, 0, img.width, img.height);
-          _t.imageIndex = 0;
-          return defer.resolve(_t);
-        });
-      });
+        };
+      })(this));
       return defer;
     };
 
@@ -92,6 +97,10 @@ sarine.viewer.dynamic.sprite - v0.0.8 -  Tuesday, March 24th, 2015, 10:58:06 AM
       var defer, _t;
       defer = this.full_init_defer;
       defer.notify(this.id + " : start load first image");
+      if (!this.validViewer) {
+        defer.resolve(this);
+        defer;
+      }
       _t = this;
       this.downloadSprite(defer).then(function() {
         if (_t.autoPlay) {

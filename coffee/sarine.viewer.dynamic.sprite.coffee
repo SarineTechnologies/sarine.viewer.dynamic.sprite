@@ -1,5 +1,5 @@
 ###!
-sarine.viewer.dynamic.sprite - v0.0.8 -  Tuesday, March 24th, 2015, 10:58:06 AM 
+sarine.viewer.dynamic.sprite - v0.0.8 -  Wednesday, March 25th, 2015, 11:55:53 AM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
 ###
 class Sprite extends Viewer.Dynamic
@@ -15,7 +15,7 @@ class Sprite extends Viewer.Dynamic
 		@imagesDownload = 0
 		@imagegap = 0
 		@playOrder = {}  
-
+		@validViewer = true
 
 	class SprtieImg
 		constructor: (img,size) ->
@@ -47,13 +47,15 @@ class Sprite extends Viewer.Dynamic
 			if(_t.playing)
 				_t.play()
 		.then ()->
+			@validViewer = true
 			defer.notify(_t.id + " : start load first image");
 			_t.loadImage(_t.src + _t.firstImagePath).then (img)-> 
 				defer.notify(_t.id + " : finish load first image");
 				_t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize)
 				_t.imageIndex = 0
 				defer.resolve(_t)
-		.fail ->
+		.fail =>
+			@validViewer = false
 			_t.loadImage(_t.callbackPic).then (img)-> 
 				defer.notify(_t.id + " : finish load first image")
 				_t.canvas.attr({"class": "no_stone" ,"width": img.width, "height": img.height}) 
@@ -64,6 +66,10 @@ class Sprite extends Viewer.Dynamic
 	full_init : ()->
 		defer = @full_init_defer
 		defer.notify(@id + " : start load first image")
+		if !@validViewer
+			defer.resolve(this)
+			defer 
+		
 		_t = @
 		@downloadSprite(defer).then(()-> 
 			if _t.autoPlay 
