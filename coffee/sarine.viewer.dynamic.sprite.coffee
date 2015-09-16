@@ -1,19 +1,20 @@
 ###!
-sarine.viewer.dynamic.sprite - v0.2.0 -  Thursday, July 9th, 2015, 1:58:13 PM 
+sarine.viewer.dynamic.sprite - v0.2.0 -  Wednesday, September 16th, 2015, 1:30:15 PM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
 ###
 class Sprite extends Viewer.Dynamic
 	constructor: (options) ->
 		super(options)
-		{@jsonFileName,@firstImagePath,@spritesPath,@oneSprite} = options
+		{@jsonFileName,@firstImagePath,@spritesPath,@oneSprite,@imageType} = options
+		@imageType = @imageType || '.jpg'
 		@metadata = undefined
 		@sprites = []
 		@currentSprite = 0
 		@playing = false 
-		@delta = 1
+		@delta = 1 
 		@imageIndex = -1
 		@imagesDownload = 0
-		@imagegap = 0
+		@imagegap = 0 
 		@playOrder = {}  
 		@validViewer = true
 
@@ -79,7 +80,7 @@ class Sprite extends Viewer.Dynamic
 		defer
 	downloadSprite : (mainDefer)->
 		_t = @
-		@loadImage(@src + @spritesPath + (if !@oneSprite then @sprites.length else "") +  ".jpg" ).then (img)->
+		@loadImage(@src + @spritesPath + (if !@oneSprite then @sprites.length else "") + @imageType ).then (img)->
 			sprite = new SprtieImg(img,_t.metadata.ImageSize)
 			_t.imagesDownload += sprite.column * sprite.rows
 			_t.sprites.push sprite
