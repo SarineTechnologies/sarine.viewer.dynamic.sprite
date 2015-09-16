@@ -1,6 +1,6 @@
 
 /*!
-sarine.viewer.dynamic.sprite - v0.2.0 -  Thursday, July 9th, 2015, 1:58:13 PM 
+sarine.viewer.dynamic.sprite - v0.2.0 -  Wednesday, September 16th, 2015, 1:30:15 PM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
  */
 
@@ -16,7 +16,8 @@ sarine.viewer.dynamic.sprite - v0.2.0 -  Thursday, July 9th, 2015, 1:58:13 PM
 
     function Sprite(options) {
       Sprite.__super__.constructor.call(this, options);
-      this.jsonFileName = options.jsonFileName, this.firstImagePath = options.firstImagePath, this.spritesPath = options.spritesPath, this.oneSprite = options.oneSprite;
+      this.jsonFileName = options.jsonFileName, this.firstImagePath = options.firstImagePath, this.spritesPath = options.spritesPath, this.oneSprite = options.oneSprite, this.imageType = options.imageType;
+      this.imageType = this.imageType || '.jpg';
       this.metadata = void 0;
       this.sprites = [];
       this.currentSprite = 0;
@@ -114,7 +115,7 @@ sarine.viewer.dynamic.sprite - v0.2.0 -  Thursday, July 9th, 2015, 1:58:13 PM
     Sprite.prototype.downloadSprite = function(mainDefer) {
       var _t;
       _t = this;
-      return this.loadImage(this.src + this.spritesPath + (!this.oneSprite ? this.sprites.length : "") + ".jpg").then(function(img) {
+      return this.loadImage(this.src + this.spritesPath + (!this.oneSprite ? this.sprites.length : "") + this.imageType).then(function(img) {
         var sprite;
         sprite = new SprtieImg(img, _t.metadata.ImageSize);
         _t.imagesDownload += sprite.column * sprite.rows;
