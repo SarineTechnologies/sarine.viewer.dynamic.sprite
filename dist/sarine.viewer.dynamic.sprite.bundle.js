@@ -1,6 +1,6 @@
 
 /*!
-sarine.viewer.dynamic.sprite - v0.4.0 -  Monday, March 21st, 2016, 4:24:56 PM 
+sarine.viewer.dynamic.sprite - v0.4.0 -  Sunday, June 26th, 2016, 5:04:55 PM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
  */
 
@@ -114,8 +114,12 @@ sarine.viewer.dynamic.sprite - v0.4.0 -  Monday, March 21st, 2016, 4:24:56 PM
 
     function Sprite(options) {
       Sprite.__super__.constructor.call(this, options);
-      this.jsonFileName = options.jsonFileName, this.firstImagePath = options.firstImagePath, this.spritesPath = options.spritesPath, this.oneSprite = options.oneSprite, this.imageType = options.imageType;
+      this.jsonFileName = options.jsonFileName, this.firstImagePath = options.firstImagePath, this.spritesPath = options.spritesPath, this.oneSprite = options.oneSprite, this.imageType = options.imageType, this.backOnEnd = options.backOnEnd;
       this.imageType = this.imageType || '.jpg';
+      this.backOnEnd = this.backOnEnd;
+      if (typeof this.backOnEnd === "undefined") {
+        this.backOnEnd = true;
+      }
       this.metadata = void 0;
       this.sprites = [];
       this.currentSprite = 0;
@@ -230,7 +234,7 @@ sarine.viewer.dynamic.sprite - v0.4.0 -  Monday, March 21st, 2016, 4:24:56 PM
     Sprite.prototype.autoPlayFunc = function() {};
 
     Sprite.prototype.nextImage = function() {
-      var col, imageInSprite, imgInfo, playingSprite, row;
+      var col, imageInSprite, imgInfo, playingSprite, row, totalLessOne;
       if (this.metadata && this.sprites.length > 0) {
         if (this.imageIndex + this.delta === this.metadata.TotalImageCount || this.imageIndex + this.delta === this.imagesDownload) {
           this.delta = -1;
@@ -248,7 +252,12 @@ sarine.viewer.dynamic.sprite - v0.4.0 -  Monday, March 21st, 2016, 4:24:56 PM
           }
           this.imagegap = this.imageIndex;
         }
-        imageInSprite = this.imageIndex - this.imagegap + (this.delta === -1 ? this.sprites[this.currentSprite].totalImage : 0);
+        if (!this.backOnEnd && this.sprites.length === 1) {
+          totalLessOne = this.sprites[this.currentSprite].totalImage - 1;
+          imageInSprite = this.imageIndex - this.imagegap + (this.delta === -1 ? totalLessOne : 0);
+        } else {
+          imageInSprite = this.imageIndex - this.imagegap + (this.delta === -1 ? this.sprites[this.currentSprite].totalImage : 0);
+        }
         col = parseInt(-1 * parseInt(imageInSprite % playingSprite.column) * this.metadata.ImageSize);
         row = parseInt(-1 * parseInt(imageInSprite / playingSprite.rows) * this.metadata.ImageSize);
         if (!this.playOrder[this.imageIndex]) {
