@@ -1,6 +1,6 @@
 {
   "name": "sarine.viewer.dynamic.sprite",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "main": "dist/sarine.viewer.dynamic.sprite.js",
   "ignore": [
     ".git",
