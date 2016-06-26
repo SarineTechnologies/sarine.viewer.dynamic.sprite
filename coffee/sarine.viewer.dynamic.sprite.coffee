@@ -1,12 +1,14 @@
 ###!
-sarine.viewer.dynamic.sprite - v0.4.0 -  Monday, March 21st, 2016, 4:24:57 PM 
+sarine.viewer.dynamic.sprite - v0.4.0 -  Sunday, June 26th, 2016, 5:04:55 PM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
 ###
 class Sprite extends Viewer.Dynamic
 	constructor: (options) ->
 		super(options)
-		{@jsonFileName,@firstImagePath,@spritesPath,@oneSprite,@imageType} = options
+		{@jsonFileName,@firstImagePath,@spritesPath,@oneSprite,@imageType,@backOnEnd} = options
 		@imageType = @imageType || '.jpg'
+		@backOnEnd = @backOnEnd
+		if typeof @backOnEnd == "undefined" then @backOnEnd = true			
 		@metadata = undefined
 		@sprites = []
 		@currentSprite = 0
@@ -96,6 +98,7 @@ class Sprite extends Viewer.Dynamic
 				@delta = -1
 			if (@imageIndex + @delta == -1)
 				@delta = 1
+			
 			@imageIndex += @delta
 			playingSprite = @sprites[@currentSprite]
 			if (@imageIndex - @imagegap)  %  playingSprite.totalImage == 0 && @imageIndex > 0
@@ -105,7 +108,12 @@ class Sprite extends Viewer.Dynamic
 					playingSprite = @sprites[--@currentSprite]
 				@imagegap = @imageIndex
 
-			imageInSprite = @imageIndex - @imagegap + if @delta == -1 then @sprites[@currentSprite].totalImage else 0
+			# fix light 1 sprite issue
+			if !@backOnEnd && @sprites.length == 1 
+				totalLessOne = @sprites[@currentSprite].totalImage - 1
+				imageInSprite = @imageIndex - @imagegap + if @delta == -1 then totalLessOne else 0
+			else
+				imageInSprite = @imageIndex - @imagegap + if @delta == -1 then @sprites[@currentSprite].totalImage else 0
 			col =  parseInt(-1 * parseInt(imageInSprite % playingSprite.column) * @metadata.ImageSize)
 			row = parseInt(-1 * parseInt(imageInSprite / playingSprite.rows) * @metadata.ImageSize)
 			if !@playOrder[@imageIndex]
