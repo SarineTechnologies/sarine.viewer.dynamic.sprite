@@ -1,4 +1,10 @@
 {
+  "name": "sarine.viewer.dynamic.sprite",
+  "title": "sarine.viewer.dynamic.sprite",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SarineTechnologies/sarine.viewer.dynamic.sprite.git"
+  },
   "devDependencies": {
     "grunt-git-release": "^0.1.3",
     "grunt": "^0.4.5",
