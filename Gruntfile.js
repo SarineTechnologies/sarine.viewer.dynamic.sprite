@@ -93,7 +93,8 @@ module.exports = function(grunt) {
         'uglify',
         'clean:postbuild',
         'copyVersion',
-        'copy:bundle'
+        'copy:bundle',
+        'clean:bundlecoffee' //remove bundle.coffe file - not necessary
     ]);
 
     grunt.registerTask('copyVersion' , 'copy version from package.json to sarine.viewer.clarity.config' , function (){
@@ -138,7 +139,7 @@ module.exports = function(grunt) {
         {
             core = 
             [
-                'node_modules/sarine.viewer/coffee/sarine.viewer.bundle.coffee',
+                'node_modules/sarine.viewer/coffee/sarine.viewer.coffee',
                 'node_modules/sarine.viewer.dynamic/coffee/sarine.viewer.dynamic.coffee'
             ]
 
@@ -148,7 +149,7 @@ module.exports = function(grunt) {
         {
             core = 
             [
-                '../../core/sarine.viewer/coffee/sarine.viewer.bundle.coffee',
+                '../../core/sarine.viewer/coffee/sarine.viewer.coffee',
                 '../sarine.viewer.dynamic/coffee/sarine.viewer.dynamic.coffee'
             ]
 
