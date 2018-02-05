@@ -36,8 +36,8 @@ module.exports = function(grunt) {
         uglify: {
             options: {
                 preserveComments: 'some',
-                banner: '###!\n<%= config.name %> - v<%= config.version %> - ' +
-                        ' <%= grunt.template.today("dddd, mmmm dS, yyyy, h:MM:ss TT") %> ' + '\n ' + grunt.file.read("copyright.txt") + '\n###\n'
+                banner: '/*\n<%= config.name %> - v<%= config.version %> - ' +
+                        ' <%= grunt.template.today("dddd, mmmm dS, yyyy, h:MM:ss TT") %> ' + '\n ' + grunt.file.read("copyright.txt") + '\n*/\n'
             },
             build: {
                 src: config.dist.root + '/<%= config.name %>.js',
