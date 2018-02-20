@@ -80,7 +80,19 @@ module.exports = function(grunt) {
                 dest: config.dist.root + '/<%= config.name %>.config',
                 src: [target + '<%= config.name %>.config']
             }
-        }
+        },
+         watch: {
+                options: {
+                    interrupt: true
+                },
+                scripts: {
+                    files: [target + 'coffee/<%= config.name %>.coffee'],
+                    tasks: ['build'],
+                    options: {
+                        spawn: false,
+                    }
+                }
+            }
     })
     grunt.registerTask('build', [
         'clean:build',
@@ -110,6 +122,7 @@ module.exports = function(grunt) {
         copyFile.version = packageFile.version;
         grunt.file.write(configFileName , JSON.stringify(copyFile));
     });
+     grunt.registerTask('dev', ['build', 'watch']);
 
     function decideDist()
     {
