@@ -16,21 +16,23 @@ class Sprite extends Viewer.Dynamic
 		@imagegap = 0 
 		@playOrder = {}  
 		@validViewer = true
+		@basePluginUrl = options.baseUrl + 'atomic/v1/assets/sarine.plugin.imgplayer/'
+		@http2 = @isHTTP2()
 
 	class SprtieImg
 		constructor: (img,size) ->
 			@column = img.width / size
 			@rows = img.height / size
 			@image = img
-			@totalImage = @column * @rows
+			@totalImage = @column * @rows			
 
 
-	convertElement : () ->
+	convertElement : () ->		
 		@canvas = $("<canvas>")
 		@ctx = @canvas[0].getContext('2d')
-		@element.append(@canvas)
+		@element.append(@canvas)		
 	
-	first_init : ()->
+	first_init : ()->		
 		defer = @first_init_defer 
 		msg = {}
 		defer.notify(@id,"load_json","start") 
@@ -51,9 +53,12 @@ class Sprite extends Viewer.Dynamic
 			defer.notify(_t.id + " : start load first image");
 			_t.loadImage(_t.src + _t.firstImagePath).then (img)-> 
 				defer.notify(_t.id + " : finish load first image");
+				#if(!_t.http2)
 				_t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize)
 				_t.imageIndex = 0
 				defer.resolve(_t)
+				# else
+				# 	_t.loadImages(defer)
 		.fail =>
 			@validViewer = false
 			_t.loadImage(_t.callbackPic).then (img)-> 
@@ -71,11 +76,15 @@ class Sprite extends Viewer.Dynamic
 			defer 
 		
 		_t = @
-		@downloadSprite(defer).then(()-> 
-			if _t.autoPlay 
-				_t.play true
-			true
-			)
+		if _t.http2
+			#defer.resolve(this)
+			@loadImages(defer)
+		else
+			@downloadSprite(defer).then(()-> 
+				if _t.autoPlay 
+					_t.play true
+				true
+				)
 		defer
 	downloadSprite : (mainDefer)->
 		_t = @
@@ -123,4 +132,43 @@ class Sprite extends Viewer.Dynamic
 			if @imageType == '.png'
 				@ctx.clearRect(0,0,@metadata.ImageSize,@metadata.ImageSize);
 			@ctx.drawImage(@sprites[imgInfo.spriteNumber].image, imgInfo.col  ,imgInfo.row)
+	loadImages : (mainDefer)->
+		_t = @
+		assets = [
+			{element:'script',src: _t.basePluginUrl + 'sarine.plugin.imgplayer.min.js'},
+			{element:'link',src: _t.basePluginUrl + 'sarine.plugin.imgplayer.min.css'}]
+		_t.loadAssets(assets, () -> 
+			_t.div = $("<div/>")
+			_t.element.css "-webkit-box-align", "center"
+			_t.element.css "-webkit-box-pack", "center"
+			_t.element.css "display", "-webkit-box"
+			_t.div.css "display", "none"
+
+			_t.element.append(_t.div)
+			_url = _t.src + _t.firstImagePath.replace('img0.jpg', '') + 'img{num}' + _t.imageType
+
+			_t.div.on("play", (event, plugin) ->
+					_t.canvas.remove() if _t.element.has(_t.canvas).length
+					_t.div.css "display", "block"
+					event.stopPropagation()					
+				)
+				.on("pause", (event, plugin) ->
+					event.stopPropagation()
+				)
+				.on("stop", (event, plugin) ->   
+					event.stopPropagation()                      
+				)
+				.imgplay({
+					startImage: 0,
+					totalImages: _t.metadata.TotalImageCount,
+					imageName: 'img{num}' + _t.imageType,                           
+					urlDir: _url,
+					rate: _t.metadata.FPS,
+					height: _t.metadata.ImageSize,
+					width: _t.metadata.ImageSize,
+					autoPlay: true,
+					autoReverse: true
+				})
+			mainDefer.resolve(_t)			
+		)
 @Sprite = Sprite
