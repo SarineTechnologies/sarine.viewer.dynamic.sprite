@@ -1,6 +1,7 @@
 {
   "name": "sarine.viewer.dynamic.sprite",
   "title": "sarine.viewer.dynamic.sprite",
+  "version": "0.8.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/SarineTechnologies/sarine.viewer.dynamic.sprite.git"
@@ -36,7 +37,6 @@
     "install": "^0.1.8",
     "load-grunt-tasks": "^3.1.0"
   },
-  "version": "0.7.1",
   "engines": {
     "node": "4.5.0"
   },
