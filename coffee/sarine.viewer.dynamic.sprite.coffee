@@ -17,7 +17,7 @@ class Sprite extends Viewer.Dynamic
 		@playOrder = {}
 		@validViewer = true
 		@basePluginUrl = options.baseUrl + 'atomic/v1/assets/'
-		@http2 = @isHTTP2()
+		@http2 = Device.isHTTP2()
 
 	class SprtieImg
 		constructor: (img, size) ->
