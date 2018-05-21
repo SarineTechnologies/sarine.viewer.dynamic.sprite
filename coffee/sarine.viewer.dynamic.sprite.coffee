@@ -46,19 +46,9 @@ class Sprite extends Viewer.Dynamic
 					"height": data.ImageSize
 				}).parent().css "background" , "##{data.background}"
 			_t.delay = 1000 / data.FPS
-			# if(_t.playing)
-			# 	_t.play()
 		.then () ->
 			@validViewer = true
 			defer.notify(_t.id + " : start load first image")
-			# _t.loadImage(_t.src + _t.firstImagePath).then (img) ->
-			# 	defer.notify(_t.id + " : finish load first image")
-			# 	if(!_t.http2)
-			# 		_t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize)
-			# 		_t.imageIndex = 0
-			# 		defer.resolve(_t)
-			# 	else
-			# 		_t.loadImages(defer)
 			
 			if(_t.http2)
 				_t.loadImages(defer)
@@ -87,14 +77,6 @@ class Sprite extends Viewer.Dynamic
 			defer
 		
 		_t = @
-		# if _t.http2
-		# 	defer.resolve(this)
-		# else
-		# 	@downloadSprite(defer).then(() ->
-		# 		if _t.autoPlay
-		# 			_t.play true
-		# 		true
-		# 		)
 
 		if(!_t.http2)
 			@downloadSprite(defer).then(() ->
@@ -102,8 +84,6 @@ class Sprite extends Viewer.Dynamic
 					_t.play true
 				true
 				)
-		#else
-		#	_t.loadImages(defer)
 
 		defer
 
