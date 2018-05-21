@@ -46,19 +46,29 @@ class Sprite extends Viewer.Dynamic
 					"height": data.ImageSize
 				}).parent().css "background" , "##{data.background}"
 			_t.delay = 1000 / data.FPS
-			if(_t.playing)
-				_t.play()
+			# if(_t.playing)
+			# 	_t.play()
 		.then () ->
 			@validViewer = true
 			defer.notify(_t.id + " : start load first image")
-			_t.loadImage(_t.src + _t.firstImagePath).then (img) ->
-				defer.notify(_t.id + " : finish load first image")
-				if(!_t.http2)
+			# _t.loadImage(_t.src + _t.firstImagePath).then (img) ->
+			# 	defer.notify(_t.id + " : finish load first image")
+			# 	if(!_t.http2)
+			# 		_t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize)
+			# 		_t.imageIndex = 0
+			# 		defer.resolve(_t)
+			# 	else
+			# 		_t.loadImages(defer)
+			
+			if(_t.http2)
+				_t.loadImages(defer)
+			else 
+				_t.loadImage(_t.src + _t.firstImagePath).then (img) ->
+					defer.notify(_t.id + " : finish load first image")	
 					_t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize)
-					_t.imageIndex = 0
-					defer.resolve(_t)
-				else
-					_t.loadImages(defer)
+					_t.imageIndex = 0			
+					defer.resolve(_t)		
+
 		.fail =>
 			@validViewer = false
 			_t.loadImage(_t.callbackPic).then (img) ->
@@ -68,6 +78,7 @@ class Sprite extends Viewer.Dynamic
 				_t.imageIndex = 0
 				defer.resolve(_t)
 		defer
+
 	full_init: () ->
 		defer = @full_init_defer
 		defer.notify(@id + " : start load first image")
@@ -76,15 +87,26 @@ class Sprite extends Viewer.Dynamic
 			defer
 		
 		_t = @
-		if _t.http2
-			defer.resolve(this)
-		else
+		# if _t.http2
+		# 	defer.resolve(this)
+		# else
+		# 	@downloadSprite(defer).then(() ->
+		# 		if _t.autoPlay
+		# 			_t.play true
+		# 		true
+		# 		)
+
+		if(!_t.http2)
 			@downloadSprite(defer).then(() ->
 				if _t.autoPlay
 					_t.play true
 				true
 				)
+		#else
+		#	_t.loadImages(defer)
+
 		defer
+
 	downloadSprite: (mainDefer) ->
 		_t = @
 		@loadImage(@src + @spritesPath + (if !@oneSprite then @sprites.length else "") + @imageType ).then (img)->
@@ -96,7 +118,9 @@ class Sprite extends Viewer.Dynamic
 			else
 				_t.downloadSprite(mainDefer)
 			true
+
 	autoPlayFunc: () ->
+	
 	nextImage: () ->
 		if(@metadata && @sprites.length > 0)
 			if (@imageIndex + @delta == @metadata.TotalImageCount || @imageIndex + @delta == @imagesDownload)
@@ -131,6 +155,7 @@ class Sprite extends Viewer.Dynamic
 			if @imageType == '.png'
 				@ctx.clearRect(0,0,@metadata.ImageSize,@metadata.ImageSize)
 			@ctx.drawImage(@sprites[imgInfo.spriteNumber].image, imgInfo.col  ,imgInfo.row)
+	
 	loadImages: (mainDefer) ->
 		_t = @
 		assets = [
@@ -143,10 +168,14 @@ class Sprite extends Viewer.Dynamic
 			_t.element.css "display", "-webkit-box"
 			_t.element.append(_t.div)
 			
-			_t.div.on("play", (event, plugin) ->
+			_t.div
+				.on("firstimgloaded", (event) ->
+					mainDefer.resolve(_t)
+				)
+				.on("play", (event, plugin) ->
 					if _t.element.has(_t.canvas).length
 						_t.canvas.remove()
-						mainDefer.resolve(_t)
+						# mainDefer.resolve(_t)
 					event.stopPropagation()
 				)
 				.on("pause", (event, plugin) ->
