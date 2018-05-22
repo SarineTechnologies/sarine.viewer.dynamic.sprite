@@ -17,8 +17,13 @@ class Sprite extends Viewer.Dynamic
 		@playOrder = {}
 		@validViewer = true
 		@basePluginUrl = options.baseUrl + 'atomic/v1/assets/'
-		@http2 = Device.isHTTP2()
-
+		
+		# http2 support disabled. 
+		# Let's continue to download sprites because of the huge amount of loupe images 
+		# that hang http2 connection of loupe cloudfront distribution :-(
+		# @http2 = Device.isHTTP2()
+		@http2 = false
+		
 	class SprtieImg
 		constructor: (img, size) ->
 			@column = img.width / size
