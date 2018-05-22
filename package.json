@@ -36,8 +36,11 @@
     "install": "^0.1.8",
     "load-grunt-tasks": "^3.1.0"
   },
-  "version": "0.7.1",
+  "version": "0.7.11",
   "engines": {
     "node": "4.5.0"
+  },
+  "scripts": {
+    "build": "npm install && grunt build"
   }
 }
