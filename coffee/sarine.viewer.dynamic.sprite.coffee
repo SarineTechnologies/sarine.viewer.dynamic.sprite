@@ -17,6 +17,9 @@ class Sprite extends Viewer.Dynamic
 		@playOrder = {}
 		@validViewer = true
 		@basePluginUrl = options.baseUrl + 'atomic/v1/assets/'
+		@cdn_subdomains = if typeof window.cdn_subdomains isnt 'undefined' then window.cdn_subdomains else []
+		qs = new queryString()
+		@isLocal = qs.getValue("isLocal") == "true"
 		
 		# http2 support disabled. 
 		# Let's continue to download sprites because of the huge amount of loupe images 
@@ -58,7 +61,7 @@ class Sprite extends Viewer.Dynamic
 			if(_t.http2)
 				_t.loadImages(defer)
 			else 
-				_t.loadImage(_t.src + _t.firstImagePath).then (img) ->
+				_t.loadImage(_t.getShardingDomain(_t.src, 0) + _t.firstImagePath).then (img) ->
 					defer.notify(_t.id + " : finish load first image")	
 					_t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize)
 					_t.imageIndex = 0			
@@ -92,9 +95,16 @@ class Sprite extends Viewer.Dynamic
 
 		defer
 
+	getShardingDomain: (url, numImg) ->
+		if (@cdn_subdomains.length && !@isLocal)
+			shard =  @cdn_subdomains[numImg % @cdn_subdomains.length]
+			return url.replace(/\/[^.]*/, '//' + shard)
+		else
+			return url
+
 	downloadSprite: (mainDefer) ->
 		_t = @
-		@loadImage(@src + @spritesPath + (if !@oneSprite then @sprites.length else "") + @imageType ).then (img)->
+		@loadImage(@getShardingDomain(@src, (if !@oneSprite then @sprites.length+1 else 0)) + @spritesPath + (if !@oneSprite then @sprites.length else "") + @imageType ).then (img)->
 			sprite = new SprtieImg(img,_t.metadata.ImageSize)
 			_t.imagesDownload += sprite.column * sprite.rows
 			_t.sprites.push sprite
@@ -183,3 +193,50 @@ class Sprite extends Viewer.Dynamic
 				})
 		)
 @Sprite = Sprite
+
+### Query string hepler ###
+class window.queryString
+  constructor: (url) ->
+    __qsImpl = new queryStringImpl(url)
+
+    @getValue = (key) ->
+      result = __qsImpl.params[key]
+      if not result?
+        result = __qsImpl.canonicalParams[key.toLowerCase()]
+      return result
+  
+    @count = () ->
+      __qsImpl.count
+
+    @hasKey = (key) ->
+      return key of __qsImpl.params || key.toLowerCase() of __qsImpl.canonicalParams
+
+
+class queryStringImpl
+  constructor: (url)->
+    qsPart = queryStringImpl.getQueryStringPart(url)
+    [@params, @canonicalParams, @count] = queryStringImpl.initParams qsPart
+
+  @getQueryStringPart: (url) ->
+    if url?
+      index = url.indexOf '?'
+      return if index > 0 then url.substring index else ''
+    return window.location.search
+
+  @initParams: (qsPart) ->
+    params = {}
+    canonicalParams = {}
+    count = 0
+    a = /\+/g  #// Regex for replacing addition symbol with a space
+    r = /([^&=]+)=?([^&]*)/g
+    d = (s) -> 
+      decodeURIComponent(s.replace(a, " "))
+    q = qsPart.substring(1)
+
+    while (e = r.exec(q))
+      key = d(e[1])
+      value = d(e[2])
+      params[key] = value
+      canonicalParams[key.toLowerCase()] = value
+      count += 1
+    return [params, canonicalParams, count]
