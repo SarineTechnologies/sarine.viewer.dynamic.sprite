@@ -41,7 +41,7 @@
     "node": "4.5.0"
   },
    "scripts": {
-    "build": "npm install && grunt build",
+    "build": "grunt build",
     "dev": "grunt dev"
   }
 }
