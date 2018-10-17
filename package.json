@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://github.com/SarineTechnologies/sarine.viewer.dynamic.sprite.git"
   },
-    "dependencies": {
+  "dependencies": {
     "sarine.viewer": "https://github.com/SarineTechnologies/sarine.viewer.git#dev",
     "sarine.viewer.dynamic": "https://github.com/SarineTechnologies/sarine.viewer.dynamic.git#dev"
   },
@@ -37,10 +37,7 @@
     "install": "^0.1.8",
     "load-grunt-tasks": "^3.1.0"
   },
-  "engines": {
-    "node": "4.5.0"
-  },
-   "scripts": {
+  "scripts": {
     "build": "grunt build",
     "dev": "grunt dev"
   }
