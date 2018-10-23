@@ -65,7 +65,7 @@ class Sprite extends Viewer.Dynamic
 					defer.notify(_t.id + " : finish load first image")	
 					_t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize)
 					_t.imageIndex = 0			
-					defer.resolve(_t)		
+					defer.resolve(_t)	
 
 		.fail =>
 			@validViewer = false
@@ -87,7 +87,7 @@ class Sprite extends Viewer.Dynamic
 		_t = @
 
 		if(!_t.http2)
-			@downloadSprite(defer).then(() ->
+			@downloadFirstSprite(defer).then(() ->
 				if _t.autoPlay
 					_t.play true
 				true
@@ -102,17 +102,38 @@ class Sprite extends Viewer.Dynamic
 		else
 			return url
 
-	downloadSprite: (mainDefer) ->
+	downloadFirstSprite: (mainDefer) ->
 		_t = @
+		Device.isSupportsWebp().then  (->
+					_t.imageTypeTmp=_t.imageType
+					_t.imageType =".webp"
+				),   ->
+					_t.imageType =_t.imageType
+				.then ()->
+					_t.loadImage(_t.getShardingDomain(_t.src, (if !_t.oneSprite then _t.sprites.length+1 else 0)) + _t.spritesPath + (if !_t.oneSprite then _t.sprites.length else "") + _t.imageType ).then (img)->				
+						if(img.src.indexOf('data:image')==-1)
+							_t.initSprite(img,mainDefer)
+						else if(_t.imageType = ".webp")
+							_t.imageType =_t.imageTypeTmp
+							_t.loadImage(_t.getShardingDomain(_t.src, (if !_t.oneSprite then _t.sprites.length+1 else 0)) + _t.spritesPath + (if !_t.oneSprite then _t.sprites.length else "") + _t.imageType ).then (img)->											
+								_t.initSprite(img,mainDefer)
+			    true
+
+	downloadSprite: (mainDefer) ->
+		_t = @		
 		@loadImage(@getShardingDomain(@src, (if !@oneSprite then @sprites.length+1 else 0)) + @spritesPath + (if !@oneSprite then @sprites.length else "") + @imageType ).then (img)->
-			sprite = new SprtieImg(img,_t.metadata.ImageSize)
-			_t.imagesDownload += sprite.column * sprite.rows
-			_t.sprites.push sprite
-			if(_t.imagesDownload >= _t.metadata.TotalImageCount)
-				mainDefer.resolve(_t)
-			else
-				_t.downloadSprite(mainDefer)
-			true
+			_t.initSprite(img,mainDefer)
+	
+	initSprite: (img,mainDefer)->
+		_t = @
+		sprite = new SprtieImg(img,_t.metadata.ImageSize)
+		_t.imagesDownload += sprite.column * sprite.rows
+		_t.sprites.push sprite
+		if(_t.imagesDownload >= _t.metadata.TotalImageCount)
+			mainDefer.resolve(_t)
+		else
+			_t.downloadSprite(mainDefer)
+		true
 
 	autoPlayFunc: () ->
 	
