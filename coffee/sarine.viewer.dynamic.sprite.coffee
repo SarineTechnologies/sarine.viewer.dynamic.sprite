@@ -104,16 +104,16 @@ class Sprite extends Viewer.Dynamic
 
 	downloadFirstSprite: (mainDefer) ->
 		_t = @
-		Device.isSupportsWebp().then  ()->
+		Device.isSupportsWebp().then  (->
 					_t.imageTypeTmp=_t.imageType
 					_t.imageType =".webp"
-				.catch =>
-						_t.imageTyp=_t.imageTyp
+				),   ->
+					_t.imageType =_t.imageType
 				.then ()->
 					_t.loadImage(_t.getShardingDomain(_t.src, (if !_t.oneSprite then _t.sprites.length+1 else 0)) + _t.spritesPath + (if !_t.oneSprite then _t.sprites.length else "") + _t.imageType ).then (img)->				
 						if(img.src.indexOf('data:image')==-1)
 							_t.initSprite(img,mainDefer)
-						else if(_t.imageType = "webp")
+						else if(_t.imageType = ".webp")
 							_t.imageType =_t.imageTypeTmp
 							_t.loadImage(_t.getShardingDomain(_t.src, (if !_t.oneSprite then _t.sprites.length+1 else 0)) + _t.spritesPath + (if !_t.oneSprite then _t.sprites.length else "") + _t.imageType ).then (img)->											
 								_t.initSprite(img,mainDefer)
