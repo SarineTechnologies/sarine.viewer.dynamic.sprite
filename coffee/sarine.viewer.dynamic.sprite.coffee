@@ -61,8 +61,11 @@ class Sprite extends Viewer.Dynamic
 			if(_t.http2)
 				_t.loadImages(defer)
 			else 
-			_t.loadImage(_t.getShardingDomain(_t.src, 0) + _t.firstImagePath).then (img) ->
-					_t.initImage(defer,img)
+				_t.loadImage(_t.getShardingDomain(_t.src, 0) + _t.firstImagePath).then (img) ->
+					defer.notify(_t.id + " : finish load first image")	
+					_t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize)
+					_t.imageIndex = 0			
+					defer.resolve(_t)	
 
 		.fail =>
 			@validViewer = false
@@ -73,13 +76,6 @@ class Sprite extends Viewer.Dynamic
 				_t.imageIndex = 0
 				defer.resolve(_t)
 		defer
-
-	initImage: (defer,img) ->
-		_t = @
-		defer.notify(_t.id + " : finish load first image")	
-		_t.ctx.drawImage(img, 0, 0, _t.metadata.ImageSize, _t.metadata.ImageSize)
-		_t.imageIndex = 0			
-		defer.resolve(_t)
 
 	full_init: () ->
 		defer = @full_init_defer
