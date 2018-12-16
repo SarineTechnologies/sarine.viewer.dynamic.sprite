@@ -20,6 +20,7 @@ class Sprite extends Viewer.Dynamic
 		@cdn_subdomains = if typeof window.cdn_subdomains isnt 'undefined' then window.cdn_subdomains else []
 		qs = new queryString()
 		@isLocal = qs.getValue("isLocal") == "true"
+		@useWebp=false
 		
 		# http2 support disabled. 
 		# Let's continue to download sprites because of the huge amount of loupe images 
@@ -104,12 +105,7 @@ class Sprite extends Viewer.Dynamic
 
 	downloadFirstSprite: (mainDefer) ->
 		_t = @
-		Device.isSupportsWebp().then  (->
-					_t.imageTypeTmp=_t.imageType
-					_t.imageType =".webp"
-				),   ->
-					_t.imageType =_t.imageType
-				.then ()->
+		_t.isSupportsWebp().then  ()->
 					_t.loadImage(_t.getShardingDomain(_t.src, (if !_t.oneSprite then _t.sprites.length+1 else 0)) + _t.spritesPath + (if !_t.oneSprite then _t.sprites.length else "") + _t.imageType ).then (img)->				
 						if(img.src.indexOf('data:image')==-1)
 							_t.initSprite(img,mainDefer)
@@ -118,6 +114,20 @@ class Sprite extends Viewer.Dynamic
 							_t.loadImage(_t.getShardingDomain(_t.src, (if !_t.oneSprite then _t.sprites.length+1 else 0)) + _t.spritesPath + (if !_t.oneSprite then _t.sprites.length else "") + _t.imageType ).then (img)->											
 								_t.initSprite(img,mainDefer)
 			    true
+	
+	isSupportsWebp: ()->
+		defer= $.Deferred();
+		_t = @
+		if(@useWebp)
+			Device.isSupportsWebp().then  (->
+				_t.imageTypeTmp=_t.imageType
+				_t.imageType =".webp"
+				defer.resolve()
+			),   ->
+				defer.resolve()
+		else
+			defer.resolve()
+		defer
 
 	downloadSprite: (mainDefer) ->
 		_t = @		
